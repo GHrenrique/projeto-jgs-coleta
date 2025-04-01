@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocolo de Coleta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <div class="card protocolo-card">
+            <div class="card-body">
+                <form id="protocoloForm">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="text-center col">
+                            <img src="logo.jpg" alt="Logo" class="logo">
+                            <h3 class="lato-black mt-3 ">Protocolo de Coleta</h3>
+                        </div>
+
+                        <div class="d-flex flex-column  gap-2 col">
+
+                            <p class="mb-1 d-flex flex-column lato-regular-italic">
+                                Nº de Protocolo de Coleta:
+                                <input type="text" class="form-control mt-1" id="numeroProtocolo" required>
+                            </p>
+
+                            <p class="mb-1 d-flex flex-column lato-regular-italic">Data: <input type="date" class="mt-1 form-control"
+                                    id="data" required></p>
+
+                            <p class="mb-1 d-flex flex-column lato-regular-italic">
+                                Nº das Notas Fiscais:
+                                <input type="text" class="form-control mt-1" id="notasFiscais" required>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cliente" class="lato-black pb-2">Cliente:</label>
+                        <select class="form-select" id="cliente" required>
+                            <option value="">Selecione um cliente</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nomeCompleto" class="lato-black pb-2">Nome completo:</label>
+                        <input type="text" class="form-control" id="nomeCompleto" required>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="rg" class="lato-black pb-2">RG:</label>
+                            <input type="text" class="form-control" id="rg" required>
+                        </div>
+                        <div class="col">
+                            <label for="placa" class="lato-black pb-2">Placa:</label>
+                            <input type="text" class="form-control" id="placa" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="notaFiscal" required>
+                                <label class="form-check-label" for="notaFiscal">
+                                    Nota Fiscal
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="certificadoAnalise" required>
+                                <label class="form-check-label" for="certificadoAnalise">
+                                    Certificado de Análise
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="loteAmostra" required>
+                                <label class="form-check-label" for="loteAmostra">
+                                    Lote de amostra
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="boletoAnexo" required>
+                                <label class="form-check-label" for="boletoAnexo">
+                                    Boleto em anexo
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn btn-primary">Salvar Protocolo</button>
+                        <button type="button" class="btn btn-secondary" id="btnImprimir">Imprimir</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

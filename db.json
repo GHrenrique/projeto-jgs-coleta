@@ -1,0 +1,28 @@
+{
+  "protocolos": [
+    {
+      "numeroProtocolo": "1050",
+      "data": "2025-04-02",
+      "notasFiscais": "205215",
+      "clienteId": "1",
+      "nomeCompleto": "Cliente Exemplo 1",
+      "rg": "51.561.651-6",
+      "placa": "516-1651",
+      "notaFiscal": true,
+      "certificadoAnalise": true,
+      "loteAmostra": true,
+      "boletoAnexo": true,
+      "id": 1
+    }
+  ],
+  "clientes": [
+    {
+      "id": 1,
+      "nome": "Cliente Exemplo 1",
+      "documento": "123.456.789-00"
+    }
+  ],
+  "config": {
+    "ultimoProtocolo": 1050
+  }
+}
