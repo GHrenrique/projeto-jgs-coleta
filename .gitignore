@@ -1,0 +1,18 @@
+# Ignorar a pasta node_modules
+node_modules/
+
+# Ignorar arquivos de log
+*.log
+
+# Ignorar banco de dados local simulado
+db.json
+
+# Ignorar arquivos de lock (opcional, se você quiser um lockfile fixo, remova essa linha)
+package-lock.json
+
+# Ignorar arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ignorar configurações do VS Code (se houver)
+.vscode/
