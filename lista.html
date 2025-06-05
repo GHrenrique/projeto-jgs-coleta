@@ -56,7 +56,7 @@
         $(document).ready(function() {
             // Load clients first
             $.ajax({
-                url: 'http://localhost:3000/clientes',
+                url: 'https://projeto-jgs-coleta.vercel.app/api/clientes',
                 type: 'GET',
                 success: function(clientes) {
                     const clientesMap = {};
@@ -66,7 +66,7 @@
 
                     // Then load protocols
                     $.ajax({
-                        url: 'http://localhost:3000/protocolos',
+                        url: 'https://projeto-jgs-coleta.vercel.app/api/protocolos',
                         type: 'GET',
                         success: function(protocolos) {
                             const tbody = $('#protocolosList');
