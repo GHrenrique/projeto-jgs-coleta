@@ -2,7 +2,7 @@ import { MongoClient } from 'mongodb';
 require('dotenv').config();
 
 // MongoDB connection URL - use environment variable or fallback to local MongoDB
-const url = process.env.MONGO_URL || 'mongodb://localhost:27017';
+const url = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 const dbName = 'jgs-coleta';
 
 let client = null;
