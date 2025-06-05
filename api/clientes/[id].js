@@ -1,4 +1,4 @@
-import { connect } from '../../../mongo.js';
+import { connect } from '../../mongo.js';
 
 export default async function handler(req, res) {
   // CORS headers para todas as requisições
