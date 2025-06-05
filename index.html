@@ -12,6 +12,17 @@
 </head>
 
 <body>
+    <script>
+        // Se a URL não termina com index.html, redireciona
+        if (
+            window.location.pathname === "/" ||
+            window.location.pathname === "" ||
+            window.location.pathname.endsWith("/")
+        ) {
+            window.location.replace("index.html");
+        }
+    </script>
+
     <nav class="nav-menu">
         <div class="container">
             <a href="index.html">
