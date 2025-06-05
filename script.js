@@ -1,3 +1,6 @@
+// Adiciona a URL base da API no topo do arquivo
+const API_URL = 'https://projeto-jgs-coleta-git-main-ghrenriques-projects.vercel.app';
+
 $(document).ready(function() {
     // Função para mostrar feedback no modal
     function showFeedback(message, title = 'Feedback', callback = null) {
@@ -88,7 +91,7 @@ $(document).ready(function() {
     // Função para carregar a lista de clientes
     function loadClientes() {
         $.ajax({
-            url: 'http://localhost:3000/clientes',
+            url: API_URL + '/clientes',
             type: 'GET',
             success: function(clientes) {
                 const tbody = $('#clientesList');
@@ -133,7 +136,7 @@ $(document).ready(function() {
     // Load clients and set next protocol number
     if ($('#cliente').length) {
         $.ajax({
-            url: 'http://localhost:3000/clientes',
+            url: API_URL + '/clientes',
             type: 'GET',
             success: function(clientes) {
                 const clienteSelect = $('#cliente');
@@ -150,7 +153,7 @@ $(document).ready(function() {
     // Get next protocol number
     if ($('#numeroProtocolo').length) {
         $.ajax({
-            url: 'http://localhost:3000/config',
+            url: API_URL + '/config',
             type: 'GET',
             success: function(config) {
                 const nextProtocol = config.ultimoProtocolo + 1;
@@ -228,7 +231,7 @@ $(document).ready(function() {
 
             showConfirm('Tem certeza que deseja salvar este protocolo?', function() {
                 $.ajax({
-                    url: 'http://localhost:3000/protocolos',
+                    url: API_URL + '/protocolos',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(formData),
@@ -292,7 +295,7 @@ $(document).ready(function() {
             const clienteId = $(this).val();
             if (clienteId) {
                 $.ajax({
-                    url: `http://localhost:3000/clientes/${clienteId}`,
+                    url: API_URL + '/clientes/' + clienteId,
                     type: 'GET',
                     success: function(cliente) {
                         $('#nomeCompleto').val(cliente.nome);
@@ -319,7 +322,7 @@ $(document).ready(function() {
             
             showConfirm('Tem certeza que deseja cadastrar este cliente?', function() {
                 $.ajax({
-                    url: 'http://localhost:3000/clientes',
+                    url: API_URL + '/clientes',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({ nome }),
@@ -353,7 +356,7 @@ $(document).ready(function() {
         
         showConfirm(`Tem certeza que deseja excluir o cliente "${nome}"?`, function() {
             $.ajax({
-                url: `http://localhost:3000/clientes/${id}`,
+                url: API_URL + '/clientes/' + id,
                 type: 'DELETE',
                 success: function() {
                     hideLoading(2300, function() {
@@ -395,7 +398,7 @@ $(document).ready(function() {
         
         showConfirm(`Tem certeza que deseja atualizar o cliente "${nome}"?`, function() {
             $.ajax({
-                url: `http://localhost:3000/clientes/${id}`,
+                url: API_URL + '/clientes/' + id,
                 type: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify({ nome: nome }),
@@ -425,7 +428,7 @@ $(document).ready(function() {
         if (protocolId) {
             // Load protocol data
             $.ajax({
-                url: `http://localhost:3000/protocolos/${protocolId}`,
+                url: API_URL + '/protocolos/' + protocolId,
                 type: 'GET',
                 success: function(protocolo) {
                     // Fill form fields with protocol data
