@@ -1,6 +1,7 @@
 {
     "name": "protocolo-coleta",
     "version": "1.0.0",
+    "type": "module",
     "description": "Sistema de Protocolo de Coleta",
     "main": "server.js",
     "scripts": {
