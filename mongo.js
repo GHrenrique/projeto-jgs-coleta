@@ -12,7 +12,7 @@ let db = null;
 
 export async function connect() {
   if (db) return db;
-  client = new MongoClient(url, { useUnifiedTopology: true });
+  client = new MongoClient(url);
   await client.connect();
   db = client.db(dbName);
   return db;
