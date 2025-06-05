@@ -344,4 +344,38 @@ $(document).ready(function() {
             });
         });
     });
+
+    // Check if we're on the index page and have an ID parameter
+    if (window.location.pathname.includes('index.html')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const protocolId = urlParams.get('id');
+        
+        if (protocolId) {
+            // Load protocol data
+            $.ajax({
+                url: `http://localhost:3000/protocolos/${protocolId}`,
+                type: 'GET',
+                success: function(protocolo) {
+                    // Fill form fields with protocol data
+                    $('#numeroProtocolo').val(protocolo.numeroProtocolo);
+                    $('#data').val(protocolo.data);
+                    $('#notasFiscais').val(protocolo.notasFiscais);
+                    $('#cliente').val(protocolo.clienteId).trigger('change');
+                    $('#nomeCompleto').val(protocolo.nomeCompleto);
+                    $('#rg').val(protocolo.rg);
+                    $('#placa').val(protocolo.placa);
+                    $('#notaFiscal').prop('checked', protocolo.notaFiscal);
+                    $('#certificadoAnalise').prop('checked', protocolo.certificadoAnalise);
+                    $('#loteAmostra').prop('checked', protocolo.loteAmostra);
+                    $('#boletoAnexo').prop('checked', protocolo.boletoAnexo);
+                    
+                    // Disable all form fields for printing
+                    $('#protocoloForm input, #protocoloForm select').prop('disabled', true);
+                },
+                error: function(xhr, status, error) {
+                    showFeedback('Erro ao carregar protocolo: ' + error, 'Erro');
+                }
+            });
+        }
+    }
 }); 

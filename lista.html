@@ -98,8 +98,8 @@
 
             // Handle print button click
             $(document).on('click', '.btn-imprimir', function() {
-                const id = $(this).data('id');
-                window.open(`index.html?id=${id}`, '_blank');
+                const protocoloId = $(this).closest('tr').find('td:first').text();
+                window.open(`index.html?id=${protocoloId}`, '_blank');
             });
         });
     </script>
