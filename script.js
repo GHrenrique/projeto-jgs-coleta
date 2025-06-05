@@ -68,17 +68,22 @@ $(document).ready(function() {
 
     // Intercepta todas as requisições AJAX para mostrar o loading
     $(document).ajaxSend(function(event, jqXHR, settings) {
-        // Só ativa loading para GET se NÃO estiver na index.html
+        // Só ativa loading para POST/PUT/DELETE ou GET em páginas específicas
         if (settings.type === 'GET') {
+            // Não mostra loading para GET na página inicial
             if (!window.location.pathname.includes('index.html')) {
                 showLoading(300);
             }
         } else {
-            showLoading(2300);
+            // Reduz o tempo mínimo de loading para operações de escrita
+            showLoading(500);
         }
     });
-    // Para GET, hideLoading é chamado no success/error das funções de listagem
-    // Para POST/PUT/DELETE, hideLoading é chamado manualmente nos callbacks já existentes
+
+    // Intercepta erros AJAX para garantir que o loading seja removido
+    $(document).ajaxError(function(event, jqXHR, settings, error) {
+        hideLoading(0);
+    });
 
     // Função para carregar a lista de clientes
     function loadClientes() {
@@ -157,13 +162,58 @@ $(document).ready(function() {
         });
     }
 
-    // Form submission (protocolo)
+    // Função para verificar se todos os campos obrigatórios estão preenchidos
+    function checkFormValidity() {
+        const requiredFields = [
+            '#numeroProtocolo',
+            '#data',
+            '#notasFiscais',
+            '#cliente',
+            '#nomeCompleto',
+            '#rg',
+            '#placa',
+            '#notaFiscal',
+            '#certificadoAnalise',
+            '#loteAmostra',
+            '#boletoAnexo'
+        ];
+
+        const allFieldsValid = requiredFields.every(field => {
+            const element = $(field);
+            if (element.is(':checkbox')) {
+                return element.is(':checked');
+            }
+            return element.val() && element.val().trim() !== '';
+        });
+
+        // Atualiza o estado do botão de impressão
+        $('#btnImprimir').prop('disabled', !allFieldsValid);
+        
+        return allFieldsValid;
+    }
+
+    // Adiciona listeners para todos os campos do formulário
     if ($('#protocoloForm').length) {
+        const formFields = '#numeroProtocolo, #data, #notasFiscais, #cliente, #nomeCompleto, #rg, #placa, #notaFiscal, #certificadoAnalise, #loteAmostra, #boletoAnexo';
+        
+        // Inicialmente desabilita o botão de impressão
+        $('#btnImprimir').prop('disabled', true);
+        
+        // Adiciona listeners para todos os campos
+        $(formFields).on('input change', function() {
+            checkFormValidity();
+        });
+
+        // Form submission (protocolo)
         $('#protocoloForm').on('submit', function(e) {
             e.preventDefault();
             
+            if (!checkFormValidity()) {
+                showFeedback('Por favor, preencha todos os campos obrigatórios.', 'Atenção');
+                return;
+            }
+            
             const formData = {
-                // numeroProtocolo será gerado pelo backend
                 data: $('#data').val(),
                 notasFiscais: $('#notasFiscais').val(),
                 clienteId: $('#cliente').val(),
@@ -183,14 +233,14 @@ $(document).ready(function() {
                     contentType: 'application/json',
                     data: JSON.stringify(formData),
                     success: function(response) {
-                        hideLoading(2300, function() {
+                        hideLoading(500, function() {
                             showFeedback('Protocolo salvo com sucesso!', 'Sucesso', function() {
                                 window.location.href = 'lista.html';
                             });
                         });
                     },
                     error: function(xhr, status, error) {
-                        hideLoading(2300, function() {
+                        hideLoading(0, function() {
                             showFeedback('Erro ao salvar o protocolo: ' + error, 'Erro');
                         });
                     }
@@ -202,6 +252,11 @@ $(document).ready(function() {
     // Print functionality
     if ($('#btnImprimir').length) {
         $('#btnImprimir').on('click', function() {
+            if (!checkFormValidity()) {
+                showFeedback('Por favor, preencha todos os campos obrigatórios antes de imprimir.', 'Atenção');
+                return;
+            }
+            
             showConfirm('Deseja imprimir o protocolo?', function() {
                 window.print();
             });
