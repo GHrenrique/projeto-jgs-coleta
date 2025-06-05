@@ -1,5 +1,5 @@
 // Adiciona a URL base da API no topo do arquivo
-const API_URL = 'https://projeto-jgs-coleta-git-main-ghrenriques-projects.vercel.app';
+const API_URL = 'https://projeto-jgs-coleta.vercel.app/aoi/';
 
 $(document).ready(function() {
     // Função para mostrar feedback no modal

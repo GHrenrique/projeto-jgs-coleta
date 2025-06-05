@@ -12,7 +12,6 @@ const PORT = 3000;
 // Permitir apenas o domínio do front-end Vercel e localhost para desenvolvimento
 app.use(cors({
   origin: [
-    'https://projeto-jgs-coleta-git-main-ghrenriques-projects.vercel.app',
     'http://127.0.0.1:5500',
     'https://projeto-jgs-coleta.vercel.app/',
     'http://localhost:5500'
