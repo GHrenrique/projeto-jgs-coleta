@@ -19,13 +19,11 @@ export async function connect() {
 }
 
 // Função para fechar a conexão
-async function closeConnection() {
+export async function closeConnection() {
   if (client) {
     await client.close();
     client = null;
     db = null;
     console.log('Conexão com MongoDB fechada');
   }
-}
-
-module.exports = { connect, closeConnection }; 
+} 
