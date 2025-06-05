@@ -46,6 +46,40 @@ $(document).ready(function() {
         modal.show();
     }
 
+    // Controle de loading para GET (lista) e POST/PUT/DELETE (ações)
+    let loadingStartTime = null;
+    function showLoading(minTime = 0) {
+        loadingStartTime = Date.now();
+        if ($('#loadingOverlay').length === 0) {
+            $('body').append('<div id="loadingOverlay" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(255,255,255,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div></div>');
+        } else {
+            $('#loadingOverlay').show();
+        }
+    }
+    function hideLoading(minTime = 0, callback) {
+        const elapsed = Date.now() - loadingStartTime;
+        const wait = Math.max(minTime - elapsed, 0);
+        setTimeout(function() {
+            $('#loadingOverlay').fadeOut(200, function() {
+                if (typeof callback === 'function') callback();
+            });
+        }, wait);
+    }
+
+    // Intercepta todas as requisições AJAX para mostrar o loading
+    $(document).ajaxSend(function(event, jqXHR, settings) {
+        // Só ativa loading para GET se NÃO estiver na index.html
+        if (settings.type === 'GET') {
+            if (!window.location.pathname.includes('index.html')) {
+                showLoading(300);
+            }
+        } else {
+            showLoading(2300);
+        }
+    });
+    // Para GET, hideLoading é chamado no success/error das funções de listagem
+    // Para POST/PUT/DELETE, hideLoading é chamado manualmente nos callbacks já existentes
+
     // Função para carregar a lista de clientes
     function loadClientes() {
         $.ajax({
@@ -54,7 +88,6 @@ $(document).ready(function() {
             success: function(clientes) {
                 const tbody = $('#clientesList');
                 tbody.empty();
-                
                 clientes.forEach(function(cliente) {
                     const row = `
                         <tr>
@@ -74,9 +107,12 @@ $(document).ready(function() {
                     `;
                     tbody.append(row);
                 });
+                hideLoading(300);
             },
             error: function(xhr, status, error) {
-                showFeedback('Erro ao carregar clientes: ' + error, 'Erro');
+                hideLoading(300, function() {
+                    showFeedback('Erro ao carregar clientes: ' + error, 'Erro');
+                });
             }
         });
     }
@@ -121,13 +157,13 @@ $(document).ready(function() {
         });
     }
 
-    // Form submission
+    // Form submission (protocolo)
     if ($('#protocoloForm').length) {
         $('#protocoloForm').on('submit', function(e) {
             e.preventDefault();
             
             const formData = {
-                numeroProtocolo: $('#numeroProtocolo').val(),
+                // numeroProtocolo será gerado pelo backend
                 data: $('#data').val(),
                 notasFiscais: $('#notasFiscais').val(),
                 clienteId: $('#cliente').val(),
@@ -141,33 +177,22 @@ $(document).ready(function() {
             };
 
             showConfirm('Tem certeza que deseja salvar este protocolo?', function() {
-                // Update protocol number in config
                 $.ajax({
-                    url: 'http://localhost:3000/config',
-                    type: 'PUT',
+                    url: 'http://localhost:3000/protocolos',
+                    type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({
-                        ultimoProtocolo: parseInt(formData.numeroProtocolo)
-                    }),
-                    success: function() {
-                        // Save protocol after updating config
-                        $.ajax({
-                            url: 'http://localhost:3000/protocolos',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(formData),
-                            success: function(response) {
-                                showFeedback('Protocolo salvo com sucesso!', 'Sucesso', function() {
-                                    window.location.href = 'lista.html';
-                                });
-                            },
-                            error: function(xhr, status, error) {
-                                showFeedback('Erro ao salvar o protocolo: ' + error, 'Erro');
-                            }
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        hideLoading(2300, function() {
+                            showFeedback('Protocolo salvo com sucesso!', 'Sucesso', function() {
+                                window.location.href = 'lista.html';
+                            });
                         });
                     },
                     error: function(xhr, status, error) {
-                        showFeedback('Erro ao atualizar número do protocolo: ' + error, 'Erro');
+                        hideLoading(2300, function() {
+                            showFeedback('Erro ao salvar o protocolo: ' + error, 'Erro');
+                        });
                     }
                 });
             });
@@ -238,39 +263,23 @@ $(document).ready(function() {
             }
             
             showConfirm('Tem certeza que deseja cadastrar este cliente?', function() {
-                // Get current clients to determine next ID
                 $.ajax({
                     url: 'http://localhost:3000/clientes',
-                    type: 'GET',
-                    success: function(clientes) {
-                        const nextId = clientes.length > 0 
-                            ? Math.max(...clientes.map(c => c.id)) + 1 
-                            : 1;
-
-                        const novoCliente = {
-                            id: nextId,
-                            nome: nome
-                        };
-
-                        // Save new client
-                        $.ajax({
-                            url: 'http://localhost:3000/clientes',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(novoCliente),
-                            success: function() {
-                                showFeedback('Cliente cadastrado com sucesso!', 'Sucesso', function() {
-                                    window.location.href = 'lista-clientes.html';
-                                });
-                                $('#nome').val(''); // Clear form
-                            },
-                            error: function(xhr, status, error) {
-                                showFeedback('Erro ao cadastrar cliente: ' + error, 'Erro');
-                            }
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ nome }),
+                    success: function(cliente) {
+                        hideLoading(2300, function() {
+                            showFeedback('Cliente cadastrado com sucesso!', 'Sucesso', function() {
+                                window.location.href = 'lista-clientes.html';
+                            });
+                            $('#nome').val(''); // Limpar formulário
                         });
                     },
                     error: function(xhr, status, error) {
-                        showFeedback('Erro ao carregar lista de clientes: ' + error, 'Erro');
+                        hideLoading(2300, function() {
+                            showFeedback('Erro ao cadastrar cliente: ' + error, 'Erro');
+                        });
                     }
                 });
             });
@@ -292,12 +301,16 @@ $(document).ready(function() {
                 url: `http://localhost:3000/clientes/${id}`,
                 type: 'DELETE',
                 success: function() {
-                    showFeedback('Cliente excluído com sucesso!', 'Sucesso', function() {
-                        loadClientes();
+                    hideLoading(2300, function() {
+                        showFeedback('Cliente excluído com sucesso!', 'Sucesso', function() {
+                            loadClientes();
+                        });
                     });
                 },
                 error: function(xhr, status, error) {
-                    showFeedback('Erro ao excluir cliente: ' + error, 'Erro');
+                    hideLoading(2300, function() {
+                        showFeedback('Erro ao excluir cliente: ' + error, 'Erro');
+                    });
                 }
             });
         });
@@ -332,14 +345,18 @@ $(document).ready(function() {
                 contentType: 'application/json',
                 data: JSON.stringify({ nome: nome }),
                 success: function() {
-                    showFeedback('Cliente atualizado com sucesso!', 'Sucesso', function() {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-                        modal.hide();
-                        loadClientes();
+                    hideLoading(2300, function() {
+                        showFeedback('Cliente atualizado com sucesso!', 'Sucesso', function() {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                            modal.hide();
+                            loadClientes();
+                        });
                     });
                 },
                 error: function(xhr, status, error) {
-                    showFeedback('Erro ao atualizar cliente: ' + error, 'Erro');
+                    hideLoading(2300, function() {
+                        showFeedback('Erro ao atualizar cliente: ' + error, 'Erro');
+                    });
                 }
             });
         });
